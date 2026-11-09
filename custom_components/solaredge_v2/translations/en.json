@@ -1,0 +1,67 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "SolarEdge Monitoring API v2",
+        "description": "Enter the Client ID and Secret of your SolarEdge developer app (Site Access). The Redirect URI and Returned URL in that app must be exactly the Redirect URI below. The relay page forwards your browser to this Home Assistant ({callback_path}).",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client secret",
+          "redirect_uri": "Redirect URI (HTTPS relay page)",
+          "authorize_extra": "Extra authorize parameters"
+        }
+      },
+      "method": {
+        "title": "Sign in",
+        "description": "Sign in with your SolarEdge homeowner account to approve access.",
+        "menu_options": {
+          "auto": "Sign in automatically (new tab)",
+          "manual": "Sign in manually (paste the address)"
+        }
+      },
+      "auto": {
+        "title": "Approve access at SolarEdge",
+        "description": "A SolarEdge tab opens. Sign in, approve access and wait until the tab says it is connected."
+      },
+      "manual": {
+        "title": "Manual sign-in",
+        "description": "1. Open this link and approve access: {auth_url}\n2. SolarEdge sends you to the redirect page. Copy the full address of that tab (it contains `code=`) and paste it below.",
+        "data": {
+          "redirect_url": "Address of the page after approving"
+        }
+      },
+      "site": {
+        "title": "Site ID",
+        "description": "SolarEdge did not return a site ID. Enter the numeric site ID you approved.",
+        "data": {
+          "site_id": "Site ID"
+        }
+      }
+    },
+    "error": {
+      "no_code": "No `code=` found in that address."
+    },
+    "abort": {
+      "auth_failed": "SolarEdge refused the authorization: {error}",
+      "quota": "SolarEdge API limit reached. Try again later.",
+      "cannot_connect": "Could not reach the SolarEdge API.",
+      "already_configured": "This site is already configured.",
+      "reauth_successful": "Re-authentication successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling and credits",
+        "description": "Every API call costs one credit (Free tier: 2,000 per month, 10 per minute). SolarEdge itself only has new data every 15 minutes, and the newest 15-30 minutes are still empty. Automatic = the interval is derived from the credit budget.",
+        "data": {
+          "device_telemetry": "Read inverter, meter and battery telemetry",
+          "update_interval": "Minutes between power updates (0 = automatic, minimum 15)",
+          "monthly_budget": "Credits per billing cycle",
+          "billing_day": "Day the credits reset",
+          "daylight_only": "Poll only during daylight (saves about half the credits)"
+        }
+      }
+    }
+  }
+}

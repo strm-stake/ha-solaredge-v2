@@ -1,0 +1,15 @@
+{
+  "domain": "solaredge_v2",
+  "name": "SolarEdge Monitoring API v2",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": [
+    "http"
+  ],
+  "documentation": "https://github.com/strm-stake/ha-solaredge-v2",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/strm-stake/ha-solaredge-v2/issues",
+  "requirements": [],
+  "version": "0.2.1"
+}

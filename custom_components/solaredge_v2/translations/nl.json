@@ -1,0 +1,67 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "SolarEdge Monitoring API v2",
+        "description": "Vul de Client ID en het secret in van je SolarEdge developer-app (Site Access). De Redirect URI en Returned URL in die app moeten exact gelijk zijn aan de Redirect URI hieronder. De relay-pagina stuurt je browser door naar deze Home Assistant ({callback_path}).",
+        "data": {
+          "client_id": "Client ID",
+          "client_secret": "Client secret",
+          "redirect_uri": "Redirect URI (HTTPS relay-pagina)",
+          "authorize_extra": "Extra authorize-parameters"
+        }
+      },
+      "method": {
+        "title": "Inloggen",
+        "description": "Log in met je SolarEdge-huiseigenaaraccount om toegang goed te keuren.",
+        "menu_options": {
+          "auto": "Automatisch inloggen (nieuw tabblad)",
+          "manual": "Handmatig inloggen (adres plakken)"
+        }
+      },
+      "auto": {
+        "title": "Toegang goedkeuren bij SolarEdge",
+        "description": "Er opent een SolarEdge-tabblad. Log in, keur de toegang goed en wacht tot het tabblad meldt dat het verbonden is."
+      },
+      "manual": {
+        "title": "Handmatig inloggen",
+        "description": "1. Open deze link en keur de toegang goed: {auth_url}\n2. SolarEdge stuurt je naar de redirect-pagina. Kopieer het volledige adres van dat tabblad (bevat `code=`) en plak het hieronder.",
+        "data": {
+          "redirect_url": "Adres van de pagina na goedkeuren"
+        }
+      },
+      "site": {
+        "title": "Site ID",
+        "description": "SolarEdge gaf geen site ID terug. Vul het numerieke site ID in dat je hebt goedgekeurd.",
+        "data": {
+          "site_id": "Site ID"
+        }
+      }
+    },
+    "error": {
+      "no_code": "Geen `code=` gevonden in dit adres."
+    },
+    "abort": {
+      "auth_failed": "SolarEdge weigerde de autorisatie: {error}",
+      "quota": "SolarEdge API-limiet bereikt. Probeer het later opnieuw.",
+      "cannot_connect": "Kan de SolarEdge API niet bereiken.",
+      "already_configured": "Deze site is al geconfigureerd.",
+      "reauth_successful": "Opnieuw inloggen gelukt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling en credits",
+        "description": "Elke API-call kost één credit (gratis tier: 2.000 per maand, 10 per minuut). SolarEdge zelf heeft maar elke 15 minuten nieuwe data en de nieuwste 15-30 minuten zijn nog leeg. Automatisch = het interval wordt afgeleid van het creditbudget.",
+        "data": {
+          "device_telemetry": "Telemetrie van omvormer, meter en batterij lezen",
+          "update_interval": "Minuten tussen vermogensupdates (0 = automatisch, minimaal 15)",
+          "monthly_budget": "Credits per factuurperiode",
+          "billing_day": "Dag waarop de credits resetten",
+          "daylight_only": "Alleen overdag pollen (bespaart ongeveer de helft van de credits)"
+        }
+      }
+    }
+  }
+}
