@@ -63,6 +63,10 @@ If the redirect step does not work, choose **Log in manually** and paste the add
 SolarEdge replaces the refresh token on every use; the integration stores the new token immediately.
 Do not use the same token in `probe.py` or a second integration at the same time.
 
+## Branding and Marketplace
+
+The integration ships its own STRM icon and logo in `custom_components/solaredge_v2/brand/` (Home Assistant 2026.3+ reads them locally, no brands repository needed). The repository follows the Marketplace layout: one integration in `custom_components/solaredge_v2/`, `hacs.json` in the root, and a complete `manifest.json`.
+
 ## Entities
 
 One sensor per value in the V2 response, with clear names for the main ones:
