@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -14,25 +14,48 @@
 </head>
 <body>
 <h2>SolarEdge &rarr; Home Assistant</h2>
-<p id="status">Je wordt doorgestuurd naar Home Assistant&hellip;</p>
+<p id="status"></p>
 <p id="fallback" hidden>
-  Gebeurt er niets? Je moet op het thuisnetwerk zitten. Open dan handmatig:<br>
-  <a id="link" href="#">doorgaan naar Home Assistant</a><br><br>
-  Of kopieer dit hele adres en plak het in Home Assistant bij &ldquo;Handmatig inloggen&rdquo;:<br>
+  <span id="fb1"></span><br>
+  <a id="link" href="#"></a><br><br>
+  <span id="fb2"></span><br>
   <code id="full"></code>
 </p>
 <script>
-  // PAS AAN: het adres van jouw Home Assistant, zonder slash aan het eind.
+  // CHANGE THIS / PAS AAN: the address of your Home Assistant, without a trailing slash.
   var HA_BASE = "http://192.168.1.50:8123";
   var CALLBACK = "/api/solaredge_v2/callback";
+
+  var TEXT = {
+    en: {
+      redirecting: "Redirecting you to Home Assistant…",
+      idle: "SolarEdge calls this page after you approve access. Start the setup in Home Assistant.",
+      fb1: "Nothing happening? You must be on your home network. Open Home Assistant manually:",
+      link: "continue to Home Assistant",
+      fb2: "Or copy this full address and paste it in Home Assistant under “Log in manually”:"
+    },
+    nl: {
+      redirecting: "Je wordt doorgestuurd naar Home Assistant…",
+      idle: "Deze pagina wordt door SolarEdge aangeroepen na het goedkeuren van toegang. Start de installatie in Home Assistant.",
+      fb1: "Gebeurt er niets? Je moet op het thuisnetwerk zitten. Open dan handmatig:",
+      link: "doorgaan naar Home Assistant",
+      fb2: "Of kopieer dit hele adres en plak het in Home Assistant bij “Handmatig inloggen”:"
+    }
+  };
+  var lang = ((navigator.language || "en").slice(0, 2) === "nl") ? "nl" : "en";
+  var t = TEXT[lang];
+  document.documentElement.lang = lang;
+  document.getElementById("fb1").textContent = t.fb1;
+  document.getElementById("link").textContent = t.link;
+  document.getElementById("fb2").textContent = t.fb2;
 
   var qs = window.location.search || "";
   var target = HA_BASE + CALLBACK + qs;
 
   if (qs.indexOf("code=") === -1 && qs.indexOf("error=") === -1) {
-    document.getElementById("status").textContent =
-      "Deze pagina wordt door SolarEdge aangeroepen na het goedkeuren van toegang. Start de installatie in Home Assistant.";
+    document.getElementById("status").textContent = t.idle;
   } else {
+    document.getElementById("status").textContent = t.redirecting;
     document.getElementById("link").href = target;
     document.getElementById("full").textContent = window.location.href;
     setTimeout(function () { document.getElementById("fallback").hidden = false; }, 2500);

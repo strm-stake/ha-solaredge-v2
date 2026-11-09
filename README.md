@@ -1,109 +1,109 @@
-# SolarEdge Monitoring API v2 (OAuth) voor Home Assistant
+# SolarEdge Monitoring API v2 (OAuth) for Home Assistant
 
-Onofficiële integratie voor de nieuwe SolarEdge Monitoring API v2 met OAuth 2.0 *Site Access*.
-De oude V1-API met site-API-key is per 3 november 2026 uitgefaseerd. Niet gelieerd aan SolarEdge.
+🇳🇱 [Nederlandse versie](README.nl.md)
 
-**📘 Volledige installatiegids: [docs/INSTALLATIE.md](docs/INSTALLATIE.md)**
+Unofficial integration for the new SolarEdge Monitoring API v2 using OAuth 2.0 *Site Access*.
+The old V1 API with a site API key was retired on 3 November 2026. Not affiliated with SolarEdge.
 
-## Wat zit erin
+**📘 Full installation guide: [docs/INSTALLATION.md](docs/INSTALLATION.md)**
 
-| Bestand | Doel |
+## What is included
+
+| File | Purpose |
 |---|---|
-| `custom_components/solaredge_v2/` | de integratie |
-| `docs/INSTALLATIE.md` | stap-voor-stap installatiegids, credits, problemen oplossen |
-| `web/solaredge-callback.html` | relay-pagina die je op je eigen HTTPS-domein zet |
-| `tools/probe.py` | los testscript om endpoints en parameters tegen de echte API te controleren |
-| `tests/` | tests (parser, volledige config flow met callback, sensoren) |
+| `custom_components/solaredge_v2/` | the integration |
+| `docs/INSTALLATION.md` | step-by-step guide, credits, troubleshooting |
+| `web/solaredge-callback.html` | relay page you host on your own HTTPS domain |
+| `tools/probe.py` | standalone script to check endpoints and parameters against the real API |
+| `tests/` | tests (parser, full config flow with callback, sensors) |
 
-## Waarom een relay-pagina
+## Why a relay page
 
-SolarEdge accepteert als redirect alleen **HTTPS met hostnaam** (geen `http://` of IP) en stuurt geen `state` mee.
-Home Assistant draait meestal op een `http://`-adres in je eigen netwerk. Daarom:
+SolarEdge only accepts an **HTTPS redirect with a hostname** (no `http://` and no IP address) and does not return a `state` value.
+Home Assistant usually runs on an `http://` address inside your own network. So:
 
-1. SolarEdge stuurt je browser naar `https://example.com/solaredge-callback.html?code=…&site_id=…` (jouw domein).
-2. Die statische pagina stuurt dezelfde browser door naar `http://<jouw-home-assistant>:8123/api/solaredge_v2/callback?…`
-   Dat werkt alleen vanaf een apparaat op je thuisnetwerk. Home Assistant hoeft niet vanaf internet bereikbaar te zijn.
-3. De integratie heeft een eigen callback-view, koppelt de redirect aan de lopende setup via `external_id` en gebruikt PKCE.
+1. SolarEdge sends your browser to `https://example.com/solaredge-callback.html?code=…&site_id=…` (your domain).
+2. That static page forwards the same browser to `http://<your-home-assistant>:8123/api/solaredge_v2/callback?…`.
+   This only works from a device on your home network. Home Assistant does not need to be reachable from the internet.
+3. The integration has its own callback view, ties the redirect to the running setup through `external_id` and uses PKCE.
 
-De eenmalige code verschijnt in de logs van je webserver. Hij is kortlevend en onbruikbaar zonder je client secret en de PKCE-verifier.
+The one-time code appears once in your web server's logs. It is short-lived and useless without your client secret and the PKCE verifier.
 
-## Installatie
+## Installation
 
-### 1. Relay-pagina
+### 1. Relay page
 
-Zet `web/solaredge-callback.html` op je eigen HTTPS-domein, bijvoorbeeld `https://example.com/solaredge-callback.html`.
-Pas bovenin `HA_BASE` aan naar het adres waarop jij Home Assistant opent (zonder slash aan het eind).
+Put `web/solaredge-callback.html` on your own HTTPS domain, for example `https://example.com/solaredge-callback.html`.
+Edit `HA_BASE` at the top to the address you use to open Home Assistant (no trailing slash).
 
-### 2. Integratie installeren
+### 2. Install the integration
 
-**Via de Marketplace** (Home Assistant 2026.11 en nieuwer, voorheen HACS): zodra de repository op GitHub staat,
-ga je naar **Instellingen → Marketplace → Add from link**, vul de URL van de repository in en installeer de integratie.
-Voor de Marketplace is een GitHub-koppeling via device sign-in nodig. Oudere Home Assistant-versies gebruiken HACS:
-**Custom repositories → Integration**.
+**Through the Marketplace** (Home Assistant 2026.11 and newer, formerly HACS): go to **Settings → Marketplace → Add from link**,
+paste the URL of this repository and install the integration. The Marketplace needs a one-time GitHub link through device sign-in.
+Older Home Assistant versions use HACS: **Custom repositories → Integration**.
 
-**Handmatig:** kopieer de map `custom_components/solaredge_v2` naar `/config/custom_components/` en herstart Home Assistant.
+**Manually:** copy the folder `custom_components/solaredge_v2` to `/config/custom_components/` and restart Home Assistant.
 
-### 3. SolarEdge developer-app
+### 3. SolarEdge developer app
 
-Log in op https://developer.solaredge.com met het **mySolarEdge-huiseigenaar**-account (geen installateursaccount) en maak een app:
+Log in at https://developer.solaredge.com with the **mySolarEdge homeowner** account (not an installer account) and create an app:
 
 - Service: **Monitoring API**, Access type: **Site Access**
 - **Origin URL:** `https://example.com`
-- **Redirect URI** en **Returned URL:** `https://example.com/solaredge-callback.html`
-- **Scopes:** `SITE_DATA` en `DEVICE_DATA`
-- Bewaar Client ID en Client Secret (het secret zie je maar één keer).
+- **Redirect URI** and **Returned URL:** `https://example.com/solaredge-callback.html`
+- **Scopes:** `SITE_DATA` and `DEVICE_DATA`
+- Save the Client ID and Client Secret (the secret is shown only once).
 
-### 4. Integratie toevoegen
+### 4. Add the integration
 
-**Instellingen → Apparaten & services → Integratie toevoegen → SolarEdge Monitoring API v2.**
-Vul Client ID en secret in, vervang de voorbeeld-Redirect URI door jouw relay-adres, kies **Automatisch inloggen** en keur de toegang goed.
-Lukt de doorstuurstap niet, kies **Handmatig inloggen** en plak het adres van de tab na het goedkeuren.
+**Settings → Devices & services → Add integration → SolarEdge Monitoring API v2.**
+Enter the Client ID and secret, replace the example Redirect URI with your own relay address, choose **Log in automatically** and approve access.
+If the redirect step does not work, choose **Log in manually** and paste the address of the tab after approving.
 
-Het refresh-token wordt door SolarEdge bij elk gebruik vervangen; de integratie slaat het nieuwe token direct op.
-Gebruik hetzelfde token dus niet tegelijk in `probe.py` of een tweede integratie.
+SolarEdge replaces the refresh token on every use; the integration stores the new token immediately.
+Do not use the same token in `probe.py` or a second integration at the same time.
 
-## Entiteiten
+## Entities
 
-Per waarde in de V2-respons een sensor, met nette namen voor de belangrijkste:
+One sensor per value in the V2 response, with clear names for the main ones:
 
-| Entiteit | Bron | Opmerking |
+| Entity | Source | Note |
 |---|---|---|
-| **Solar power** | `/power` | nieuwste *gevulde* kwartier (SolarEdge loopt 15-30 min achter; de tijd staat in attribuut `data_timestamp`) |
-| Production today | `/overview?from=<vandaag 00:00>&to=nu` | Wh |
+| **Solar power** | `/power` | newest *filled* quarter hour (SolarEdge runs 15-30 min behind; the time is in the `data_timestamp` attribute) |
+| Production today | `/overview?from=<today 00:00>&to=now` | Wh |
 | Energy this month / this year | `/energy?resolution=MONTH` | Wh |
-| Lifetime energy | `/lifetime-energy` | onboard teller |
-| Omvormer: AC power, energy, voltage, current, frequency, consumed AC | `/inverters/telemetry` | eigen apparaat per omvormer |
-| Batterij / meter | `/storage/...`, `/meters/...` | alleen als de inventaris (`/devices`) ze meldt |
-| Open alerts, peak power, last update, apparaatgegevens | `/alerts`, `/sites/{id}`, `/devices` | veel tekstvelden staan standaard uit |
+| Lifetime energy | `/lifetime-energy` | on-board counter |
+| Inverter: AC power, energy, voltage, current, frequency, consumed AC | `/inverters/telemetry` | separate device per inverter |
+| Battery / meter | `/storage/...`, `/meters/...` | only if the inventory (`/devices`) reports them |
+| Open alerts, peak power, last update, device details | `/alerts`, `/sites/{id}`, `/devices` | many text fields are disabled by default |
 
-## Credits en poll-schema
+## Credits and polling
 
-Elke call kost 1 credit; gratis tier = 2.000 per maand en 10 per minuut. SolarEdge heeft zelf maar elke 15 minuten nieuwe data, dus vaker pollen heeft geen zin.
+Every call costs 1 credit; the free tier is 2,000 per month and 10 per minute. SolarEdge itself only has new data every 15 minutes, so polling more often than that is pointless.
 
-* **Live vermogen** (`/power`) wordt overdag gepolld; **productie vandaag** elke 2x dat interval; **omvormer-telemetrie** elke 4x.
-* **Overdag** = zon boven de horizon (entiteit `sun.sun`) + 45 minuten erna. 's Nachts wordt niets opgehaald (optie *Alleen overdag pollen*).
-* **Langzame data** (site, energie maand/jaar, lifetime, alerts) elke 12 uur, apparaten elke 24 uur.
-* Interval 0 = **automatisch**, berekend uit het budget (standaard 1.800 per cyclus). Bij de standaardinstellingen ongeveer elke 25 minuten.
-* Een endpoint dat 4xx geeft wordt tijdelijk overgeslagen, met de SolarEdge-melding in het log.
-* Waarden worden bewaard, dus een herstart kost geen credits.
+* **Live power** (`/power`) is polled during daylight; **production today** every 2x that interval; **inverter telemetry** every 4x.
+* **Daylight** = sun above the horizon (`sun.sun` entity) + 45 minutes. Nothing is fetched at night (option *Poll during daylight only*).
+* **Slow data** (site, monthly/yearly energy, lifetime, alerts) every 12 hours, devices every 24 hours.
+* Interval 0 = **automatic**, calculated from the budget (default 1,800 per cycle). With the defaults this is about every 25 minutes.
+* An endpoint that returns 4xx is skipped temporarily, with the SolarEdge message in the log.
+* Values are stored, so a restart does not cost credits.
 
-## Realtime?
+## Real time?
 
-De cloud-API werkt per kwartier. Voor live vermogen kun je lokaal Modbus TCP gebruiken (alleen via LAN, niet via wifi, volgens de
-SolarEdge SunSpec-technote) met bijvoorbeeld de community-integratie *SolarEdge Modbus Multi*.
+The cloud API works per quarter hour. For live power you can use local Modbus TCP (LAN only, not Wi-Fi, according to the
+SolarEdge SunSpec technical note), for example with the community integration *SolarEdge Modbus Multi*.
 
-## Belangrijk om te weten
+## Good to know
 
-* Onofficieel project, getest op één woninginstallatie zonder batterij of meter.
-* Het formaat van `/lifetime-energy`, `/alerts` en de meter/batterij-responses is nog niet met echte data van meerdere installaties gezien; de sensoren verschijnen automatisch zodra er waarden zijn.
-* Optimizer-data en live power-flow vallen onder SolarEdge Advanced Monitoring en zitten niet in de gratis tier.
-* Nog geen backfill naar uurstatistieken.
-* `tools/probe.py` laat precies zien wat SolarEdge teruggeeft.
-
+* Unofficial project, tested on one residential installation without battery or meter.
+* The formats of `/lifetime-energy`, `/alerts` and the meter/battery responses have not been verified with real data from multiple installations; the sensors appear automatically once values exist.
+* Optimizer-level data and live power-flow fall under SolarEdge Advanced Monitoring and are not part of the free tier.
+* No backfill into long-term statistics yet.
+* `tools/probe.py` shows exactly what SolarEdge returns.
 
 ## Tests
 
 ```
 pip install pytest-homeassistant-custom-component
-pytest            # in de projectmap
+pytest            # in the project folder
 ```

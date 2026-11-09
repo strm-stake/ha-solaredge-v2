@@ -1,5 +1,7 @@
 # Installatiegids: SolarEdge Monitoring API v2 voor Home Assistant
 
+🇬🇧 [English version](INSTALLATION.md)
+
 Met deze integratie lees je je SolarEdge-installatie in Home Assistant uit via de nieuwe Monitoring API v2 (OAuth 2.0).
 Je hebt ongeveer 30 minuten nodig en doorloopt vier stappen. De oude V1-API met site-sleutel is per 3 november 2026 uitgefaseerd.
 
